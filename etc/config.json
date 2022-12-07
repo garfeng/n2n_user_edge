@@ -1,0 +1,11 @@
+{
+  "autoRun": true,
+  "server": "http://127.0.0.1:8973",
+  "edgeParams": {
+    "-l": "127.0.0.1:8972",
+    "-c": "myclub",
+    "-k": "123456",
+    "-P": "ajfdlafjkdla",
+    "otherParams": "-A4 -r -a dhcp:0.0.0.0"
+  }
+}

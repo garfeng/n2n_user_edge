@@ -1,0 +1,50 @@
+{
+  "type": "object",
+  "labelWidth": 120,
+  "displayType": "row",
+  "properties": {
+    "autoRun": {
+      "title": "Auto run",
+      "type": "boolean",
+      "widget": "switch"
+    },
+    "server": {
+      "title": "Server",
+      "type": "string",
+      "props": {}
+    },
+    "edgeParams": {
+      "title": "EdgeParams",
+      "type": "object",
+      "properties": {
+        "-l": {
+          "title": "Host:port",
+          "type": "string",
+          "props": {}
+        },
+        "-c": {
+          "title": "Community",
+          "type": "string",
+          "props": {}
+        },
+        "-k": {
+          "title": "Key",
+          "type": "string",
+          "props": {}
+        },
+        "-P": {
+          "title": "Public key",
+          "type": "string",
+          "props": {}
+        },
+        "otherParams": {
+          "title": "Other params",
+          "type": "string",
+          "format": "textarea",
+          "default": "-A4 -r -a dhcp:0.0.0.0",
+          "props": {}
+        }
+      }
+    }
+  }
+}

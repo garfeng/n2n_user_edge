@@ -1,0 +1,20 @@
+{
+    "type": "object",
+    "labelWidth": 120,
+    "displayType": "row",
+    "properties": {
+        "username": {
+            "title": "Username",
+            "type": "string",
+            "props": {},
+            "displayType": "row"
+        },
+        "password": {
+            "title": "Password",
+            "type": "string",
+            "hidden": false,
+            "props": {},
+            "displayType": "row"
+        }
+    }
+}
