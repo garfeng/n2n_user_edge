@@ -1,0 +1,7 @@
+{
+  "port": ":8973",
+  "data": "./data/data.db",
+  "superNodeAddr": ":5645",
+  "communityTemplate": "./templates/community.tmpl",
+  "communityDestination": "./supernode/community.list"
+}
