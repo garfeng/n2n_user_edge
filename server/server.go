@@ -111,7 +111,7 @@ type CommunityData struct {
 func refreshCommunityList() error {
 	// Reload all users and write to community.list
 	users := []model.UserTable{}
-	globalConn.Model(&model.UserTable{}).Find(&users)
+	globalConn.Model(&model.UserTable{}).Find(&users, "disabled = false")
 	w := bytes.NewBuffer(nil)
 	communityTemplate.Execute(w, &CommunityData{Users: users})
 	buff := w.Bytes()
