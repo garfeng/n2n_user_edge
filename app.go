@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"changeme/model"
 	"context"
 	"encoding/json"
 	"errors"
@@ -60,17 +61,6 @@ func (a *App) PostHttp(url string, data string) (string, error) {
 	return string(buff), nil
 }
 
-type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-type SetupEdgeParam struct {
-	AutoRun    bool              `json:"autoRun"`
-	Server     string            `json:"server"`
-	EdgeParams map[string]string `json:"edgeParams"`
-}
-
 const (
 	KAccountFile = "etc/account.json"
 	KConfigFile  = "etc/config.json"
@@ -81,11 +71,11 @@ func (a *App) SetupN2N() error {
 		return errors.New("edge running")
 	}
 
-	user, err := LoadJSON[User](KAccountFile)
+	user, err := model.LoadJSON[model.User](KAccountFile)
 	if err != nil {
 		return err
 	}
-	param, err := LoadJSON[SetupEdgeParam](KConfigFile)
+	param, err := model.LoadJSON[model.SetupEdgeParam](KConfigFile)
 	if err != nil {
 		return err
 	}
@@ -145,18 +135,7 @@ func (a *App) Keygen(username, password string) (string, error) {
 	return strings.TrimSpace(sList[1]), nil
 }
 
-type ChangePasswordParam struct {
-	Username    string `json:"username"`
-	OldPassword string `json:"oldPassword"`
-	NewPassword string `json:"newPassword"`
-}
-
-type ChangePasswordResp struct {
-	Status  int    `json:"status"`
-	Message string `json:"message"`
-}
-
-func (a *App) ChangePassword(data ChangePasswordParam) error {
+func (a *App) ChangePassword(data model.ChangePasswordParam) error {
 	oldHash, err := a.Keygen(data.Username, data.OldPassword)
 	if err != nil {
 		return err
@@ -166,13 +145,13 @@ func (a *App) ChangePassword(data ChangePasswordParam) error {
 		return err
 	}
 
-	req := &ChangePasswordParam{
+	req := &model.ChangePasswordParam{
 		Username:    data.Username,
 		OldPassword: oldHash,
 		NewPassword: newHash,
 	}
 
-	cfg, err := LoadJSON[SetupEdgeParam](KConfigFile)
+	cfg, err := model.LoadJSON[model.SetupEdgeParam](KConfigFile)
 	if err != nil {
 		return err
 	}
@@ -184,7 +163,7 @@ func (a *App) ChangePassword(data ChangePasswordParam) error {
 		return err
 	}
 
-	r := new(ChangePasswordResp)
+	r := new(model.ChangePasswordResp)
 	err = json.Unmarshal([]byte(resp), r)
 	if err != nil {
 		return err
@@ -195,22 +174,4 @@ func (a *App) ChangePassword(data ChangePasswordParam) error {
 	}
 
 	return nil
-}
-
-func LoadJSON[T any](name string) (*T, error) {
-	buff, err := ioutil.ReadFile(name)
-	if err != nil {
-		return nil, err
-	}
-	v := new(T)
-	err = json.Unmarshal(buff, v)
-	return v, err
-}
-
-func SaveJSON(name string, v any) error {
-	buff, err := json.MarshalIndent(v, "", "  ")
-	if err != nil {
-		return nil
-	}
-	return ioutil.WriteFile(name, buff, 0755)
 }
