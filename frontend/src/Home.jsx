@@ -3,9 +3,11 @@ import { Component } from "react"
 import FormRender, {connectForm } from "form-render";
 
 import schema from "./HomeSchema.json";
-import {Button, Input} from "antd";
+import {Button, Input, Space} from "antd";
 
 import {SetupN2N, SaveText, LoadText, ShutdownN2N} from "../wailsjs/go/main/App";
+
+import {WindowHide, WindowShow} from "../wailsjs/runtime/runtime"
 
 const {TextArea} = Input;
 
@@ -21,6 +23,8 @@ class Home extends Component {
 
     componentDidMount(){
         LoadText(this.KFile).then(this.onTextLoad).catch(this.onError);
+        window.WindowShow = WindowShow;
+        window.WindowHide = WindowHide;
     }
 
     onTextLoad = (data) => {
@@ -59,14 +63,21 @@ class Home extends Component {
         ShutdownN2N();
     }
 
+    HideWindow = () => {
+        WindowHide();
+    }
+
     render (){
         const {form} = this.props;
         return (
             <div>
                 <FormRender form={form} schema={schema} onFinish={this.onFinish} />
-                <Button style={{"float":"right"}} type="primary" onClick={form.submit}>Connect</Button>
-                <Button style={{"float": "right"}} type="default" onClick={this.shutdownEdge}>Disconnect</Button>
-                <div style={{marginTop:"3rem"}}>
+                <div style={{"float":"right"}}>
+                        <Button type="primary" onClick={form.submit}>Connect</Button> {" "}
+                        <Button type="default" onClick={this.shutdownEdge}>Disconnect</Button>
+                </div>
+                <Button type="primary" onClick={this.HideWindow}>Hide</Button>
+                <div style={{marginTop:"1rem"}}>
                     <TextArea readOnly={true} value={this.props.log} rows={8} placeholder="Log"></TextArea>
                 </div>
             </div>

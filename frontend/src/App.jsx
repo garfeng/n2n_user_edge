@@ -7,7 +7,7 @@ import { NavLink, HashRouter as Router, Route, Routes } from "react-router-dom";
 import Home from './Home';
 import Settings from './Settings';
 import Account from './Account';
-import { Layout, Menu, Col, Row, message } from 'antd';
+import { Layout, Menu, Col, Row, message, Space } from 'antd';
 
 const { Content, Sider } = Layout;
 
@@ -87,7 +87,7 @@ class App extends Component {
 
     render() {
         return (
-            <Router>
+                <Router>
                 <Layout hasSider style={{ minHeight: "100vh" }} >
                     <Sider theme='dark' collapsible collapsed={this.state.collapsed} onCollapse={this.setCollapsed} style={{
                         overflow: 'auto',
@@ -109,11 +109,13 @@ class App extends Component {
                         <Content style={{ margin: '16px' , backgroundColor:"white", padding:"16px" }}>
                             <Row>
                                 <Col span={20} offset={2}>
-                                    <Routes>
-                                        {
-                                            this.renderRoutes(this.MenuItems)
-                                        }
-                                    </Routes>
+                                    <Space>
+                                        <Routes>
+                                            {
+                                                this.renderRoutes(this.MenuItems)
+                                            }
+                                        </Routes>
+                                    </Space>
                                 </Col>
                             </Row>
 

@@ -20,7 +20,7 @@ type App struct {
 	ctx       context.Context
 	cmd       *exec.Cmd
 	cancelCmd context.CancelFunc
-	
+
 	messageReceiver *MessageReceiver
 }
 
