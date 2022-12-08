@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/lesismal/nbio v1.3.7
+	github.com/sirupsen/logrus v1.9.0
 	github.com/wailsapp/wails/v2 v2.2.0
 	gorm.io/driver/sqlite v1.4.3
 	gorm.io/gorm v1.24.2

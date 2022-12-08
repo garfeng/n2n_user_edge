@@ -18,3 +18,7 @@ func TestDefaultConfig(t *testing.T) {
 	buff, _ := json.MarshalIndent(b, "", "  ")
 	fmt.Println(string(buff))
 }
+
+func TestAddUser(t *testing.T) {
+	*cfgPath = "../etc/server.json"
+}

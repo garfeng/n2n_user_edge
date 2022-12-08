@@ -33,3 +33,7 @@ export function SetupN2N() {
 export function ShutdownN2N() {
   return window['go']['main']['App']['ShutdownN2N']();
 }
+
+export function WaitForN2NFinish() {
+  return window['go']['main']['App']['WaitForN2NFinish']();
+}

@@ -16,8 +16,11 @@ var (
 	globalConn *gorm.DB
 )
 
-func main() {
+func init() {
 	flag.Parse()
+}
+
+func main() {
 	if (*cfgPath) == "" {
 		*cfgPath = "./etc/server.json"
 	}
@@ -28,12 +31,22 @@ func main() {
 		panic(err)
 	}
 
+	if *isManage {
+		adminCommand()
+		return
+	}
+
 	connectDB()
 	connectSuperNode()
 	initTemplate()
+	refreshCommunityList()
 
 	r := gin.Default()
 	r.POST("/auth/changePassword", ChangePasswordHandler)
+	g := r.Group("/admin", AdminAuth)
+
+	g.POST("/addUser", AddUser)
+	g.POST("/disableUser", DisableUser)
 	r.Run(cfg.Port)
 
 }
@@ -116,8 +129,8 @@ func refreshCommunityList() error {
 	communityTemplate.Execute(w, &CommunityData{Users: users})
 	buff := w.Bytes()
 	ioutil.WriteFile(cfg.CommunityDestination, buff, 0755)
-
+	
 	// reload command
-	_, err := udpConnToSuperNode.Write([]byte("reload_communites"))
+	_, err := udpConnToSuperNode.Write([]byte("reload_communities"))
 	return err
 }

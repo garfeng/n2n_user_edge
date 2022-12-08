@@ -45,10 +45,13 @@ func (u *UserTable) TableName() string {
 
 type ServerConfig struct {
 	Port                 string `json:"port"`
+	ServerUrl            string `json:"serverUrl"`
 	Data                 string `json:"data"`
 	SuperNodeAddr        string `json:"superNodeAddr"`
 	CommunityTemplate    string `json:"communityTemplate"`
 	CommunityDestination string `json:"communityDestination"`
+	LogPath              string `json:"logPath"`
+	AdminPassword        string `json:"adminPassword"`
 }
 
 func LoadJSON[T any](name string) (*T, error) {
@@ -67,4 +70,26 @@ func SaveJSON(name string, v any) error {
 		return nil
 	}
 	return ioutil.WriteFile(name, buff, 0755)
+}
+
+type AddUserReq struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	UserId   string `json:"userId"`
+}
+
+type DisableUserReq struct {
+	Username string `json:"username"`
+}
+
+type CommonResp struct {
+	Status  int    `json:"status"`
+	Message string `json:"message"`
+}
+
+func NewCommonResp(code int, message string) *CommonResp {
+	return &CommonResp{
+		Status:  code,
+		Message: message,
+	}
 }

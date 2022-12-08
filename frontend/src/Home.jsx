@@ -5,7 +5,7 @@ import FormRender, {connectForm } from "form-render";
 import schema from "./HomeSchema.json";
 import {Button} from "antd";
 
-import {SetupN2N, SaveText, LoadText} from "../wailsjs/go/main/App";
+import {SetupN2N, SaveText, LoadText, ShutdownN2N} from "../wailsjs/go/main/App";
 
 
 class Home extends Component {
@@ -31,7 +31,7 @@ class Home extends Component {
     }
 
     onError = (reason) => {
-        console.log(reason)
+        console.log("Error:", reason)
     }
 
     onFinish = (formData, errors) => {
@@ -41,6 +41,8 @@ class Home extends Component {
             this.setState(
                 {prevData:buff}
             )
+        } else {
+            this.trySetupEdge();
         }
     }
 
@@ -48,7 +50,12 @@ class Home extends Component {
         if (error != null) {
             console.log(error)
         }
-        SetupN2N();
+        SetupN2N().then(this.onError).catch(this.onError);
+    }
+
+
+    shutdownEdge = () => {
+        ShutdownN2N();
     }
 
     render (){
@@ -57,6 +64,7 @@ class Home extends Component {
             <div>
                 <FormRender form={form} schema={schema} onFinish={this.onFinish} />
                 <Button style={{"float":"right"}} type="primary" onClick={form.submit}>Connect</Button>
+                <Button style={{"float": "right"}} type="default" onClick={this.shutdownEdge}>Disconnect</Button>
             </div>
         )
     }

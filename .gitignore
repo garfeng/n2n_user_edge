@@ -3,3 +3,6 @@ node_modules
 frontend/dist
 vendor/
 .idea/
+*.exe
+log/
+data/

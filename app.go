@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"changeme/lib"
 	"changeme/model"
 	"context"
 	"encoding/json"
@@ -16,8 +17,9 @@ import (
 
 // App struct
 type App struct {
-	ctx context.Context
-	cmd *exec.Cmd
+	ctx       context.Context
+	cmd       *exec.Cmd
+	cancelCmd context.CancelFunc
 }
 
 // NewApp creates a new App application struct
@@ -67,16 +69,20 @@ const (
 )
 
 func (a *App) SetupN2N() error {
+	Log.Info("setup N2N")
 	if a.cmd != nil {
+		Log.Error("edge running")
 		return errors.New("edge running")
 	}
 
 	user, err := model.LoadJSON[model.User](KAccountFile)
 	if err != nil {
+		Log.Error(err)
 		return err
 	}
 	param, err := model.LoadJSON[model.SetupEdgeParam](KConfigFile)
 	if err != nil {
+		Log.Error(err)
 		return err
 	}
 
@@ -98,41 +104,54 @@ func (a *App) SetupN2N() error {
 		}
 	}
 
-	a.cmd = exec.Command("./edge", args...)
+	Log.Info("run cmd ./edge ", strings.Join(args, " "))
+
+	var ctx context.Context
+	ctx, a.cancelCmd = context.WithCancel(context.Background())
+	a.cmd = exec.CommandContext(ctx, "./edge", args...)
 
 	a.cmd.Stdout = os.Stdout
 	a.cmd.Stderr = os.Stderr
 
 	err = a.cmd.Start()
 	if err != nil {
+		Log.Error(err)
+		a.cmd = nil
+		a.cancelCmd = nil
+
 		return err
 	}
+
+	go a.WaitForN2NFinish()
 
 	return nil
 }
 
+func (a *App) WaitForN2NFinish() {
+	err := a.cmd.Wait()
+	a.cmd = nil
+	a.cancelCmd = nil
+	if err != nil {
+		Log.Error(err)
+		fmt.Println("[Error]", err)
+	}
+}
+
 func (a *App) ShutdownN2N() error {
-	// TODO: shutdown
+	if a.cmd == nil {
+		return nil
+	}
+	if a.cancelCmd == nil {
+		Log.Error("cmd not nil but cancelFunc is nil")
+		return errors.New("cmd not nil but cancelFunc is nil")
+	}
+
+	a.cancelCmd()
 	return nil
 }
 
 func (a *App) Keygen(username, password string) (string, error) {
-	cmd := exec.Command("./n2n-keygen", username, password)
-	w := bytes.NewBuffer(nil)
-	cmd.Stdout = w
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
-
-	if err != nil {
-		return "", err
-	}
-
-	s := w.String()
-	sList := strings.Split(s, username)
-	if len(sList) < 2 {
-		return "", errors.New("invalid result of keygen")
-	}
-	return strings.TrimSpace(sList[1]), nil
+	return lib.Keygen(username, password)
 }
 
 func (a *App) ChangePassword(data model.ChangePasswordParam) error {
