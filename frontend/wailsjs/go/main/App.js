@@ -22,6 +22,10 @@ export function PostHttp(arg1, arg2) {
   return window['go']['main']['App']['PostHttp'](arg1, arg2);
 }
 
+export function ReadMessage() {
+  return window['go']['main']['App']['ReadMessage']();
+}
+
 export function SaveText(arg1, arg2) {
   return window['go']['main']['App']['SaveText'](arg1, arg2);
 }

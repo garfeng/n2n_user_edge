@@ -31,6 +31,7 @@ class Settings extends Component {
 
     onFinish = (formData, errors) => {
         const buff = JSON.stringify(formData, null, "  ");
+        console.log(formData)
         SaveText(this.KFile, buff);
     }
 

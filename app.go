@@ -10,9 +10,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"os/exec"
 	"strings"
+	"syscall"
 )
 
 // App struct
@@ -20,11 +20,15 @@ type App struct {
 	ctx       context.Context
 	cmd       *exec.Cmd
 	cancelCmd context.CancelFunc
+	
+	messageReceiver *MessageReceiver
 }
 
 // NewApp creates a new App application struct
 func NewApp() *App {
-	return &App{}
+	return &App{
+		messageReceiver: NewMessageReceiver(20),
+	}
 }
 
 // startup is called when the app starts. The context is saved
@@ -61,6 +65,10 @@ func (a *App) PostHttp(url string, data string) (string, error) {
 		return "", err
 	}
 	return string(buff), nil
+}
+
+func (a *App) ReadMessage() *Message {
+	return a.messageReceiver.Read()
 }
 
 const (
@@ -109,9 +117,10 @@ func (a *App) SetupN2N() error {
 	var ctx context.Context
 	ctx, a.cancelCmd = context.WithCancel(context.Background())
 	a.cmd = exec.CommandContext(ctx, "./edge", args...)
+	a.cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 
-	a.cmd.Stdout = os.Stdout
-	a.cmd.Stderr = os.Stderr
+	a.cmd.Stdout = a.messageReceiver.NewSender("stdout")
+	a.cmd.Stderr = a.messageReceiver.NewSender("stderr")
 
 	err = a.cmd.Start()
 	if err != nil {

@@ -1,23 +1,28 @@
-import { Component, useState } from 'react';
+import React, { Component, useState } from 'react';
 import './App.css';
-//import { Greet } from "../wailsjs/go/main/App";
+import { Greet, ReadMessage } from "../wailsjs/go/main/App";
 import { HomeOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
 import { NavLink, HashRouter as Router, Route, Routes } from "react-router-dom";
 
 import Home from './Home';
 import Settings from './Settings';
 import Account from './Account';
-import { Layout, Menu, Col, Row } from 'antd';
+import { Layout, Menu, Col, Row, message } from 'antd';
 
 const { Content, Sider } = Layout;
 
 class App extends Component {
+    state = {
+        collapsed: true,
+        log: ""
+    }
+
     MenuItems = [
         {
             label: <NavLink to="/">Home</NavLink>,
             key: "home",
             icon: <HomeOutlined />,
-            component: <Home />,
+            component: Home,
             path: "/",
             title: "Home"
         },
@@ -25,7 +30,7 @@ class App extends Component {
             label: <NavLink to="/settings">Settings</NavLink>,
             key: "settings",
             icon: <SettingOutlined />,
-            component: <Settings />,
+            component: Settings,
             path: "/settings",
             title: "Settings"
         },
@@ -33,15 +38,13 @@ class App extends Component {
             label: <NavLink to="/account">Account</NavLink>,
             key: "account",
             icon: <UserOutlined />,
-            component: <Account />,
+            component: Account,
             path: "/account",
             title: "Account"
         }
     ]
 
-    state = {
-        collapsed: true,
-    }
+
 
     setCollapsed = () => {
         this.setState({ collapsed: !this.state.collapsed });
@@ -53,12 +56,34 @@ class App extends Component {
                 if (v.children) {
                     return this.renderRoutes(v.children)
                 } else {
-                    return <Route path={v.path} element={v.component} key={v.key} />
+                    return <Route path={v.path} element={React.createElement(v.component, {
+                        log: this.state.log
+                    }) } key={v.key} />
                 }
             }
         )
-
     }
+
+    onReadMesasge = (msg) => {
+        console.log(msg)
+        this.setState(
+            {
+                log: this.state.log +  msg.topic + ":" + msg.message
+            }
+        )
+        //message.info( msg.topic + ":" + msg.message )
+
+        this.SetupMessageChannel();
+    }
+
+    SetupMessageChannel() {
+        ReadMessage().then(this.onReadMesasge)
+    }
+
+    componentDidMount() {
+        this.SetupMessageChannel();
+    }
+
 
     render() {
         return (

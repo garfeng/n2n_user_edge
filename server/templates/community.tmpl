@@ -5,10 +5,8 @@
 #      these could either be fixed-name communities such as the following lines ...
 #
 mynetwork
-netleo
-{{range .Users}}
-* {{.Username}} {{.Password}}
-{{end}}
+netleo{{range .Users}}
+* {{.Username}} {{.Password}}{{end}}
 #
 #      ... or regular expressions that a community name must fully match
 #      such as ntop[0-1][0-9] for communities from "ntop00" through "ntop19"

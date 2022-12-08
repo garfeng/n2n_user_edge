@@ -3,16 +3,17 @@ import { Component } from "react"
 import FormRender, {connectForm } from "form-render";
 
 import schema from "./HomeSchema.json";
-import {Button} from "antd";
+import {Button, Input} from "antd";
 
 import {SetupN2N, SaveText, LoadText, ShutdownN2N} from "../wailsjs/go/main/App";
 
+const {TextArea} = Input;
 
 class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            prevData: ""
+            prevData: "",
         }
     }
 
@@ -65,6 +66,9 @@ class Home extends Component {
                 <FormRender form={form} schema={schema} onFinish={this.onFinish} />
                 <Button style={{"float":"right"}} type="primary" onClick={form.submit}>Connect</Button>
                 <Button style={{"float": "right"}} type="default" onClick={this.shutdownEdge}>Disconnect</Button>
+                <div style={{marginTop:"3rem"}}>
+                    <TextArea readOnly={true} value={this.props.log} rows={8} placeholder="Log"></TextArea>
+                </div>
             </div>
         )
     }
