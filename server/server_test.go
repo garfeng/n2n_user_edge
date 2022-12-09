@@ -1,9 +1,9 @@
 package main
 
 import (
-	"changeme/model"
 	"encoding/json"
 	"fmt"
+	"github.com/garfeng/n2n_user_edge/model"
 	"testing"
 )
 

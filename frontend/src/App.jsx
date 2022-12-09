@@ -1,6 +1,7 @@
 import React, { Component, useState } from 'react';
 import './App.css';
-import { Greet, ReadMessage } from "../wailsjs/go/main/App";
+//import { Greet } from "../wailsjs/go/main/App";
+import { EventsOn } from '../wailsjs/runtime/runtime';
 import { HomeOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
 import { NavLink, HashRouter as Router, Route, Routes } from "react-router-dom";
 
@@ -71,17 +72,11 @@ class App extends Component {
                 log: this.state.log +  msg.topic + ":" + msg.message
             }
         )
-        //message.info( msg.topic + ":" + msg.message )
 
-        this.SetupMessageChannel();
-    }
-
-    SetupMessageChannel() {
-        ReadMessage().then(this.onReadMesasge)
     }
 
     componentDidMount() {
-        this.SetupMessageChannel();
+        EventsOn("message", this.onReadMesasge)
     }
 
 
@@ -106,7 +101,7 @@ class App extends Component {
                         <Menu theme='dark' mode="inline" items={this.MenuItems} defaultSelectedKeys={"home"} />
                     </Sider>
                     <Layout className="site-layout" style={{ marginLeft: this.state.collapsed ? "80px" : "200px" }} >
-                        <Content style={{ margin: '16px' , backgroundColor:"white", padding:"16px" }}>
+                        <Content style={{ margin: '0' , backgroundColor:"white", padding:"1.6rem" }}>
                             <Row>
                                 <Col span={20} offset={2}>
                                     <Space>

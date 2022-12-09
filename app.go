@@ -2,17 +2,17 @@ package main
 
 import (
 	"bytes"
-	"changeme/lib"
-	"changeme/model"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/garfeng/n2n_user_edge/lib"
+	"github.com/garfeng/n2n_user_edge/model"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"io/ioutil"
 	"net/http"
 	"os/exec"
 	"strings"
-	"syscall"
 )
 
 // App struct
@@ -20,15 +20,11 @@ type App struct {
 	ctx       context.Context
 	cmd       *exec.Cmd
 	cancelCmd context.CancelFunc
-
-	messageReceiver *MessageReceiver
 }
 
 // NewApp creates a new App application struct
 func NewApp() *App {
-	return &App{
-		messageReceiver: NewMessageReceiver(20),
-	}
+	return &App{}
 }
 
 // startup is called when the app starts. The context is saved
@@ -67,16 +63,14 @@ func (a *App) PostHttp(url string, data string) (string, error) {
 	return string(buff), nil
 }
 
-func (a *App) ReadMessage() *Message {
-	return a.messageReceiver.Read()
-}
-
 const (
 	KAccountFile = "etc/account.json"
 	KConfigFile  = "etc/config.json"
 )
 
 func (a *App) SetupN2N() error {
+	defer runtime.EventsEmit(a.ctx, EventToggleOnLineStatus)
+
 	Log.Info("setup N2N")
 	if a.cmd != nil {
 		Log.Error("edge running")
@@ -117,10 +111,10 @@ func (a *App) SetupN2N() error {
 	var ctx context.Context
 	ctx, a.cancelCmd = context.WithCancel(context.Background())
 	a.cmd = exec.CommandContext(ctx, "./edge", args...)
-	a.cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	hideCmdWindow(a.cmd)
 
-	a.cmd.Stdout = a.messageReceiver.NewSender("stdout")
-	a.cmd.Stderr = a.messageReceiver.NewSender("stderr")
+	a.cmd.Stdout = NewMessageSender(a.ctx, "stdout")
+	a.cmd.Stderr = NewMessageSender(a.ctx, "stderr")
 
 	err = a.cmd.Start()
 	if err != nil {
@@ -137,7 +131,11 @@ func (a *App) SetupN2N() error {
 }
 
 func (a *App) WaitForN2NFinish() {
-	err := a.cmd.Wait()
+	defer runtime.EventsEmit(a.ctx, EventToggleOnLineStatus)
+
+	cmd := a.cmd
+	err := cmd.Wait()
+
 	a.cmd = nil
 	a.cancelCmd = nil
 	if err != nil {
@@ -146,7 +144,12 @@ func (a *App) WaitForN2NFinish() {
 	}
 }
 
+const (
+	EventToggleOnLineStatus = "toggle_online"
+)
+
 func (a *App) ShutdownN2N() error {
+	defer runtime.EventsEmit(a.ctx, EventToggleOnLineStatus)
 	if a.cmd == nil {
 		return nil
 	}
@@ -154,13 +157,27 @@ func (a *App) ShutdownN2N() error {
 		Log.Error("cmd not nil but cancelFunc is nil")
 		return errors.New("cmd not nil but cancelFunc is nil")
 	}
-
 	a.cancelCmd()
+	a.cmd = nil
+	a.cancelCmd = nil
 	return nil
+}
+
+func (a *App) IsOnline() bool {
+	return a.cmd != nil
 }
 
 func (a *App) Keygen(username, password string) (string, error) {
 	return lib.Keygen(username, password)
+}
+
+func (a *App) Title() string {
+	const WindowTitle = "N2N User Edge"
+
+	if a.IsOnline() {
+		return WindowTitle + " - [💖 Online]"
+	}
+	return WindowTitle + " - [Offline]"
 }
 
 func (a *App) ChangePassword(data model.ChangePasswordParam) error {

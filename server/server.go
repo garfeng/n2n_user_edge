@@ -2,8 +2,8 @@ package main
 
 import (
 	"bytes"
-	"changeme/model"
 	"flag"
+	"github.com/garfeng/n2n_user_edge/model"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"io/ioutil"
@@ -129,7 +129,7 @@ func refreshCommunityList() error {
 	communityTemplate.Execute(w, &CommunityData{Users: users})
 	buff := w.Bytes()
 	ioutil.WriteFile(cfg.CommunityDestination, buff, 0755)
-	
+
 	// reload command
 	_, err := udpConnToSuperNode.Write([]byte("reload_communities"))
 	return err

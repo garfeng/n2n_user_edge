@@ -10,6 +10,10 @@ export function Greet(arg1) {
   return window['go']['main']['App']['Greet'](arg1);
 }
 
+export function IsOnline() {
+  return window['go']['main']['App']['IsOnline']();
+}
+
 export function Keygen(arg1, arg2) {
   return window['go']['main']['App']['Keygen'](arg1, arg2);
 }
@@ -22,10 +26,6 @@ export function PostHttp(arg1, arg2) {
   return window['go']['main']['App']['PostHttp'](arg1, arg2);
 }
 
-export function ReadMessage() {
-  return window['go']['main']['App']['ReadMessage']();
-}
-
 export function SaveText(arg1, arg2) {
   return window['go']['main']['App']['SaveText'](arg1, arg2);
 }
@@ -36,6 +36,10 @@ export function SetupN2N() {
 
 export function ShutdownN2N() {
   return window['go']['main']['App']['ShutdownN2N']();
+}
+
+export function Title() {
+  return window['go']['main']['App']['Title']();
 }
 
 export function WaitForN2NFinish() {

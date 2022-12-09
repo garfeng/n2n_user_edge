@@ -2,11 +2,11 @@ package main
 
 import (
 	"bytes"
-	"changeme/lib"
-	"changeme/model"
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/garfeng/n2n_user_edge/lib"
+	"github.com/garfeng/n2n_user_edge/model"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"io/ioutil"

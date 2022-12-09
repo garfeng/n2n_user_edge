@@ -1,8 +1,8 @@
 package main
 
 import (
-	"changeme/model"
 	"fmt"
+	"github.com/garfeng/n2n_user_edge/model"
 	"github.com/lesismal/nbio"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

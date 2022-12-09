@@ -1,4 +1,4 @@
-module changeme
+module github.com/garfeng/n2n_user_edge
 
 go 1.18
 
@@ -54,4 +54,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-// replace github.com/wailsapp/wails/v2 v2.2.0 => D:\work\go\pkg\mod
+//replace github.com/wailsapp/wails/v2 v2.2.0 => github.com/wailsapp/wails/v2 v2.2.1-0.20221207075022-3f077d9bdb2a

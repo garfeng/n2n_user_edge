@@ -63,9 +63,6 @@ class Home extends Component {
         ShutdownN2N();
     }
 
-    HideWindow = () => {
-        WindowHide();
-    }
 
     render (){
         const {form} = this.props;
@@ -76,8 +73,7 @@ class Home extends Component {
                         <Button type="primary" onClick={form.submit}>Connect</Button> {" "}
                         <Button type="default" onClick={this.shutdownEdge}>Disconnect</Button>
                 </div>
-                <Button type="primary" onClick={this.HideWindow}>Hide</Button>
-                <div style={{marginTop:"1rem"}}>
+                <div style={{marginTop:"3rem"}}>
                     <TextArea readOnly={true} value={this.props.log} rows={8} placeholder="Log"></TextArea>
                 </div>
             </div>
