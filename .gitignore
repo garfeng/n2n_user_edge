@@ -6,3 +6,6 @@ vendor/
 *.exe
 log/
 data/
+yarn.lock
+etc/
+
