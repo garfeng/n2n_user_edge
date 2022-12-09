@@ -54,4 +54,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-//replace github.com/wailsapp/wails/v2 v2.2.0 => github.com/wailsapp/wails/v2 v2.2.1-0.20221207075022-3f077d9bdb2a
+replace github.com/wailsapp/wails/v2 v2.2.0 => github.com/wailsapp/wails/v2 v2.2.1-0.20221207075022-3f077d9bdb2a

@@ -1,5 +1,10 @@
 package lib
 
+import (
+	"os/exec"
+	"syscall"
+)
+
 func hideCmdWindow(c *exec.Cmd) {
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	c.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 }

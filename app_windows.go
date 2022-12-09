@@ -1,5 +1,17 @@
 package main
 
+import (
+	"context"
+	"github.com/wailsapp/wails/v2/pkg/application"
+	"github.com/wailsapp/wails/v2/pkg/menu"
+	"github.com/wailsapp/wails/v2/pkg/options"
+	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"os/exec"
+	"syscall"
+	"time"
+)
+
 func setup() {
 	var runtimeContext context.Context
 	var systray *application.SystemTray
@@ -106,5 +118,5 @@ func setup() {
 }
 
 func hideCmdWindow(c *exec.Cmd) {
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	c.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 }
