@@ -21,8 +21,8 @@ func setup() {
 
 	appOptions := &options.App{
 		Title:             app.Title(),
-		Width:             700,
-		Height:            520,
+		Width:             800,
+		Height:            580,
 		HideWindowOnClose: true,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
@@ -104,7 +104,7 @@ func setup() {
 		menu.Separator(),
 		toggleConnectMenuItem,
 		menu.Separator(),
-		menu.Label("quit").OnClick(func(_ *menu.CallbackData) {
+		menu.Label("Quit").OnClick(func(_ *menu.CallbackData) {
 			println("Quitting application")
 			mainApp.Quit()
 		}),
